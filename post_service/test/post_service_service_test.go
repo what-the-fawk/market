@@ -12,8 +12,8 @@ import (
 
 func TestPostServiceRPCGet(t *testing.T) {
 
-	cmd1 := exec.Command("docker-compose", "up")
-	cmd2 := exec.Command("docker-compose", "down")
+	cmd1 := exec.Command("docker", "compose", "up")
+	cmd2 := exec.Command("docker", "compose", "down")
 	defer cmd2.Run()
 	cmd1.Run()
 
