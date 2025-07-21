@@ -1,0 +1,30 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.4.0
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS2/postgresql.puml
+!include FONTAWESOME/users.puml
+!include DEVICONS2/go.puml
+!include DEVICONS2/react.puml
+!include ICONURL/devicons/database.puml
+
+Person(user, "Client", "Client api", $sprite="users")
+Container(front, "Web api", "Web-interface", $sprite="react")
+Rel(user, front, "react")
+
+System_Boundary(c1, "Marketplace", $link="https://github.com/plantuml-stdlib/C4-PlantUML") {
+    Container(main, "Main service", "angular", "Main interface for client API & authentification", $sprite="go")
+    Container(post_service, "Post service", "Go", "Service for posts", $sprite="go")
+    ContainerDb(main_db, "Main service db", "Postgres", "Holds user info", $sprite="postgresql")
+    ContainerDb(post_db, "Post service db", "Postgres", "Holds user activity history", $sprite="postgresql")
+}
+
+Rel(front, main, "ethernet")
+
+Rel(main, post_service, "Uses", "grpc")
+Rel(main, main_db, "Reads/Writes")
+Rel(post_service, main, "Get post/comment info")
+Rel_R(post_service, post_db, "Reads/Writes")
+@enduml

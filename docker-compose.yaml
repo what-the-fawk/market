@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  main_service:
+    build:
+      context: .
+      dockerfile: ./main_service/Dockerfile
+    ports:
+      - 3334:3333
+    depends_on:
+      - auth_db
+    env_file:
+      - .env
+
+  post_service:
+    build:
+      context: .
+      dockerfile: ./post_service/Dockerfile
+    depends_on:
+      - post_db
+    ports:
+      - 6666:6666
+    env_file:
+      - .env
+
+  auth_db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGR_USR}
+      POSTGRES_PASSWORD: ${POSTGR_PASSWORD}
+
+  post_db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGR_USR}
+      POSTGRES_PASSWORD: ${POSTGR_PASSWORD}
+

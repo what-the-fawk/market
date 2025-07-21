@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package post;
+
+option go_package = "posts_service/pkg/pb";
+
+message PostID {
+  uint64 id = 1;
+}
+
+message PostIdAuthor {
+  uint64 id = 1;
+  string author = 2;
+}
+
+message Post {
+  uint64 id = 1;
+  string author = 2;
+  string headline = 3;
+  string content = 4;
+  string location = 5;
+  uint64 value = 6;
+}
+
+message PostInfo {
+  string author = 1;
+  string headline = 2;
+  string content = 3;
+  string location = 4;
+  uint64 value = 5;
+  uint64 date_of_creation = 6;
+}
+
+message PaginationInfo {
+  uint64 page_number = 1;
+  uint32 batch_size = 2;
+  string sort_by = 3;
+  string order = 4;
+}
+
+message PostList {
+  repeated Post posts = 1;
+}
+
+service PostService  {
+  rpc NewPost(PostInfo) returns (PostID) {};
+  rpc GetPost(PostID) returns (Post) {};
+
+  rpc GetPosts(PaginationInfo) returns (PostList) {};
+}
+

@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Main Service API
+  version: 1.0.0
+servers:
+  - url: /
+
+paths:
+  /register:
+    put:
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/full_info'
+        required: true
+      responses:
+        "200":
+          description: User created
+        "400":
+          description: Invalid request
+        "500":
+          description: Unexpected error
+
+  /auth:
+    get:
+      summary: Authenticate a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_info'
+        required: true
+      responses:
+        "200":
+          description: |
+            Successfully authenticated. The jwt-token is returned in a cookie named `jwt`. It is required to include this cookie in subsequent requests.
+          headers:
+            Set-Cookie:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "400":
+          description: Invalid request
+        "404":
+          description: Wrong credentials
+        "500":
+          description: Unexpected error
+      security:
+        - cookieAuth: [ ]
+
+  /update:
+    patch:
+      summary: Update user data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/short_info'
+        required: true
+      responses:
+        "200":
+          description: User updated
+        "400":
+          description: Invalid token
+        "401":
+          description: Request from unauthorized user
+        "500":
+          description: Unexpected error
+      security:
+        - cookieAuth: [ ]
+
+components:
+  schemas:
+    auth_info:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+
+    full_info:
+      type: object
+      properties:
+        Login:
+          type: string
+        Password:
+          type: string
+        FirstName:
+          type: string
+        SecondName:
+          type: string
+        DateOfBirth:
+          type: string
+          format: date
+        Email:
+          type: string
+          format: email
+        PhoneNumber:
+          type: string
+
+    short_info:
+      type: object
+      properties:
+        FirstName:
+          type: string
+        SecondName:
+          type: string
+        DateOfBirth:
+          type: string
+          format: date
+        Email:
+          type: string
+          format: email
+        PhoneNumber:
+          type: string
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      name: jwt
+      in: cookie
