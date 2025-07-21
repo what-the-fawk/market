@@ -15,7 +15,11 @@ func TestPostServiceRPCGet(t *testing.T) {
 	cmd1 := exec.Command("docker", "compose", "up")
 	cmd2 := exec.Command("docker", "compose", "down")
 	defer cmd2.Run()
-	cmd1.Run()
+	err := cmd1.Run()
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	conn, err := grpc.Dial("localhost:6666", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
