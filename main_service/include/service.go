@@ -12,8 +12,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"soa/common"
 	"soa/post_service/posts_service/pkg/pb"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -293,6 +295,22 @@ func (s *MainServiceHandler) CreatePost(w http.ResponseWriter, req *http.Request
 	if len(info.Headline) > 100 || len(info.Content) > 3000 || len(info.Location) > 250 {
 		log.Println("Incorrect input size")
 		http.Error(w, "Make your info shorter", http.StatusBadRequest)
+		return
+	}
+
+	extension := strings.ToLower(filepath.Ext(info.Location))[1:]
+	supportedFormats := map[string]bool{
+		"jpg":  true,
+		"jpeg": true,
+		"png":  true,
+		"webp": true,
+		"gif":  true,
+		"svg":  true,
+	}
+
+	if !supportedFormats[extension] {
+		log.Println("Unsupported format")
+		http.Error(w, "Unsupported format", http.StatusBadRequest)
 		return
 	}
 
